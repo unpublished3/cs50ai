@@ -91,9 +91,43 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
+    if source == target:
+        return []
 
-    # TODO
-    raise NotImplementedError
+    visited = []
+    queue = QueueFrontier()
+    actions = [Node(source, None, None)]
+    neighbors = neighbors_for_person(source)
+
+    for neighbor in neighbors:
+            queue.add(Node(neighbor[1], actions[0], neighbor[0]))
+    
+
+    while True:
+        if queue.empty():
+            return None
+
+        node = queue.remove()
+        visited.append(node.state)
+        actions.append(node)
+
+        if node.state == target:
+            break
+
+        neighbors = neighbors_for_person(node.state)
+        for neighbor in neighbors:
+            if neighbor[1] not in visited:
+                queue.add(Node(neighbor[1], node, neighbor[0]))
+                
+    shortest_path = []
+    action = actions[-1]
+
+    while action.parent != None:
+        shortest_path.append((action.action, action.state))
+        action = action.parent
+    shortest_path.reverse()
+
+    return shortest_path
 
 
 def person_id_for_name(name):
