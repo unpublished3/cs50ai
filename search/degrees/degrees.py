@@ -24,7 +24,7 @@ def load_data(directory):
             people[row["id"]] = {
                 "name": row["name"],
                 "birth": row["birth"],
-                "movies": set()
+                "movies": set(),
             }
             if row["name"].lower() not in names:
                 names[row["name"].lower()] = {row["id"]}
@@ -38,7 +38,7 @@ def load_data(directory):
             movies[row["id"]] = {
                 "title": row["title"],
                 "year": row["year"],
-                "stars": set()
+                "stars": set(),
             }
 
     # Load stars
@@ -100,8 +100,7 @@ def shortest_path(source, target):
     neighbors = neighbors_for_person(source)
 
     for neighbor in neighbors:
-            queue.add(Node(neighbor[1], actions[0], neighbor[0]))
-    
+        queue.add(Node(neighbor[1], actions[0], neighbor[0]))
 
     while True:
         if queue.empty():
@@ -118,7 +117,7 @@ def shortest_path(source, target):
         for neighbor in neighbors:
             if neighbor[1] not in visited:
                 queue.add(Node(neighbor[1], node, neighbor[0]))
-                
+
     shortest_path = []
     action = actions[-1]
 
