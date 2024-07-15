@@ -1,8 +1,9 @@
 import itertools
 import random
+import copy
 
 
-class Minesweeper():
+class Minesweeper:
     """
     Minesweeper game representation
     """
@@ -84,7 +85,7 @@ class Minesweeper():
         return self.mines_found == self.mines
 
 
-class Sentence():
+class Sentence:
     """
     Logical statement about a Minesweeper game
     A sentence consists of a set of board cells,
@@ -105,7 +106,7 @@ class Sentence():
         """
         Returns the set of all cells in self.cells known to be mines.
         """
-        if (len(self.cells) == self.count):
+        if len(self.cells) == self.count:
             return self.cells
         else:
             return set()
@@ -114,20 +115,19 @@ class Sentence():
         """
         Returns the set of all cells in self.cells known to be safe.
         """
-        if (self.count == 0):
+        if self.count == 0:
             return self.cells
         else:
             return set()
-
 
     def mark_mine(self, cell):
         """
         Updates internal knowledge representation given the fact that
         a cell is known to be a mine.
         """
-        if (not cell in self.cells):
+        if not cell in self.cells:
             return
-        
+
         self.cells.remove(cell)
         self.count -= 1
 
@@ -136,13 +136,13 @@ class Sentence():
         Updates internal knowledge representation given the fact that
         a cell is known to be safe.
         """
-        if (not cell in self.cells):
+        if not cell in self.cells:
             return
-        
+
         self.cells.remove(cell)
 
 
-class MinesweeperAI():
+class MinesweeperAI:
     """
     Minesweeper game player
     """
@@ -196,7 +196,69 @@ class MinesweeperAI():
             5) add any new sentences to the AI's knowledge base
                if they can be inferred from existing knowledge
         """
-        raise NotImplementedError
+        # Mark move made
+        self.moves_made.add(cell)
+        # Mark move as safe
+        self.safes.add(cell)
+
+        # Add new sentence
+        neighbors = self.get_neighbors(cell[0], cell[1])
+        cells = []
+        for neighbor in neighbors:
+            if neighbor in self.mines:
+                count -= 1
+            elif neighbor in self.safes:
+                continue
+            else:
+                cells.append(neighbor)
+
+        new_sentence = Sentence(cells, count)
+        self.knowledge.append(new_sentence)
+        self.check_new_sentence(new_sentence)
+
+        # Mark additional cells as safe or mines based on new information
+        for sentence1 in self.knowledge:
+            for sentence2 in self.knowledge:    
+                if sentence1 == sentence2:
+                    continue
+
+                if sentence2.cells.issubset(sentence1.cells):
+                    print(sentence1.cells)
+                    print(sentence2.cells)
+                    print(sentence1.count)
+                    print(sentence2.count)
+
+                    sentence1.cells -= sentence2.cells
+                    sentence1.count -= sentence2.count
+
+                    self.check_new_sentence(sentence1)
+
+    def get_neighbors(self, i, j):
+        """
+        Get neighbors of a cell
+        """
+        neighbors = []
+
+        for a in range(max(0, i - 1), min(i + 2, self.height)):
+            for b in range(max(0, j - 1), min(j + 2, self.width)):
+                if (a, b) != (i, j):
+                    neighbors.append((a, b))
+
+        return neighbors
+
+    def check_new_sentence(self, sentence):
+        """
+        Check if new sentence can be conluded to have mines or safes
+        """
+        set_copy = copy.deepcopy(sentence.cells)
+
+        if sentence.count == 0:
+            for cell in set_copy:
+                self.mark_safe(cell)
+
+        if sentence.count == len(sentence.cells):
+            for cell in set_copy:
+                self.mark_mine(cell)
 
     def make_safe_move(self):
         """
@@ -207,7 +269,9 @@ class MinesweeperAI():
         This function may use the knowledge in self.mines, self.safes
         and self.moves_made, but should not modify any of those values.
         """
-        raise NotImplementedError
+        for move in self.safes:
+            if move not in self.moves_made:
+                return move
 
     def make_random_move(self):
         """
@@ -216,4 +280,13 @@ class MinesweeperAI():
             1) have not already been chosen, and
             2) are not known to be mines
         """
-        raise NotImplementedError
+        moves = []
+        for i in range(self.height):
+            for j in range(self.width):
+                move = (i, j)
+                if move not in self.moves_made and move not in self.mines:
+                    moves.append(move)
+
+        if moves:
+            return random.choice(moves)
+        return None
