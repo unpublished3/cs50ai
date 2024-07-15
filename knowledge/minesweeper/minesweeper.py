@@ -201,32 +201,37 @@ class MinesweeperAI:
         # Mark move as safe
         self.safes.add(cell)
 
+        print(f"c: {count}")
         # Add new sentence
         neighbors = self.get_neighbors(cell[0], cell[1])
         cells = []
         for neighbor in neighbors:
             if neighbor in self.mines:
+                print(f"Mine {neighbor}")
                 count -= 1
             elif neighbor in self.safes:
+                print(neighbor)
                 continue
             else:
                 cells.append(neighbor)
 
         new_sentence = Sentence(cells, count)
+        print(new_sentence.cells)
         self.knowledge.append(new_sentence)
         self.check_new_sentence(new_sentence)
 
         # Mark additional cells as safe or mines based on new information
         for sentence1 in self.knowledge:
-            for sentence2 in self.knowledge:    
+            for sentence2 in self.knowledge:
                 if sentence1 == sentence2:
                     continue
 
                 if sentence2.cells.issubset(sentence1.cells):
-                    print(sentence1.cells)
-                    print(sentence2.cells)
-                    print(sentence1.count)
-                    print(sentence2.count)
+                    print(f"s1: {sentence1.cells} {sentence1.count}")
+                    print(f"s2: {sentence2.cells} {sentence2.count}")
+                    print(
+                        f"diff: {sentence1.cells - sentence2.cells} {sentence1.count - sentence2.count}"
+                    )
 
                     sentence1.cells -= sentence2.cells
                     sentence1.count -= sentence2.count
@@ -256,7 +261,7 @@ class MinesweeperAI:
             for cell in set_copy:
                 self.mark_safe(cell)
 
-        if sentence.count == len(sentence.cells):
+        if sentence.count == len(sentence.cells) and sentence.count != 0:
             for cell in set_copy:
                 self.mark_mine(cell)
 
