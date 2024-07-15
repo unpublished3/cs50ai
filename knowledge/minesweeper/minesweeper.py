@@ -217,27 +217,21 @@ class MinesweeperAI:
         self.check_new_sentence(new_sentence)
 
         # Mark additional cells as safe or mines based on new information
-        while True:
-            changed = False
-            for sentence1 in self.knowledge:
-                for sentence2 in self.knowledge:
-                    if sentence1 == sentence2:
-                        continue
+        for sentence1 in self.knowledge:
+            for sentence2 in self.knowledge:
+                if sentence1 == sentence2:
+                    continue
 
-                    if sentence2.cells.issubset(sentence1.cells):
+                if sentence2.cells.issubset(sentence1.cells):
 
-                        cells = sentence1.cells - sentence2.cells
-                        count = sentence1.count - sentence2.count
+                    cells = sentence1.cells - sentence2.cells
+                    count = sentence1.count - sentence2.count
 
-                        new_sentence = Sentence(cells, count)
-                        if new_sentence not in self.knowledge:
-                            changed = True
-                            self.knowledge.append(new_sentence)
+                    new_sentence = Sentence(cells, count)
+                    if new_sentence not in self.knowledge:
+                        self.knowledge.append(new_sentence)
 
-                        self.check_new_sentence(new_sentence)
-
-            if not changed:
-                break
+                    self.check_new_sentence(new_sentence)
 
     def get_neighbors(self, i, j):
         """
