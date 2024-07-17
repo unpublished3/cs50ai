@@ -11,14 +11,19 @@ def main():
     if len(sys.argv) != 2:
         sys.exit("Usage: python pagerank.py corpus")
     corpus = crawl(sys.argv[1])
-    ranks = sample_pagerank(corpus, DAMPING, SAMPLES)
-    print(f"PageRank Results from Sampling (n = {SAMPLES})")
-    for page in sorted(ranks):
-        print(f"  {page}: {ranks[page]:.4f}")
-    ranks = iterate_pagerank(corpus, DAMPING)
-    print(f"PageRank Results from Iteration")
-    for page in sorted(ranks):
-        print(f"  {page}: {ranks[page]:.4f}")
+    transition_model(
+        {"1.html": {"2.html", "3.html"}, "2.html": {"3.html"}, "3.html": {}},
+        "1.html",
+        DAMPING,
+    )
+    # ranks = sample_pagerank(corpus, DAMPING, SAMPLES)
+    # print(f"PageRank Results from Sampling (n = {SAMPLES})")
+    # for page in sorted(ranks):
+    #     print(f"  {page}: {ranks[page]:.4f}")
+    # ranks = iterate_pagerank(corpus, DAMPING)
+    # print(f"PageRank Results from Iteration")
+    # for page in sorted(ranks):
+    #     print(f"  {page}: {ranks[page]:.4f}")
 
 
 def crawl(directory):
@@ -40,10 +45,7 @@ def crawl(directory):
 
     # Only include links to other pages in the corpus
     for filename in pages:
-        pages[filename] = set(
-            link for link in pages[filename]
-            if link in pages
-        )
+        pages[filename] = set(link for link in pages[filename] if link in pages)
 
     return pages
 
@@ -57,7 +59,17 @@ def transition_model(corpus, page, damping_factor):
     linked to by `page`. With probability `1 - damping_factor`, choose
     a link at random chosen from all pages in the corpus.
     """
-    raise NotImplementedError
+    distribution = {}
+    for page_ in corpus:
+        if len(corpus[page]) == 0:
+            distribution[page_] = 1 / len(corpus)
+        else:
+            distribution[page_] = (1 - damping_factor) / len(corpus)
+
+        if page_ in corpus[page]:
+            distribution[page_] += damping_factor / len(corpus[page])
+
+    return distribution
 
 
 def sample_pagerank(corpus, damping_factor, n):
