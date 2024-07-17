@@ -11,19 +11,14 @@ def main():
     if len(sys.argv) != 2:
         sys.exit("Usage: python pagerank.py corpus")
     corpus = crawl(sys.argv[1])
-    transition_model(
-        {"1.html": {"2.html", "3.html"}, "2.html": {"3.html"}, "3.html": {}},
-        "1.html",
-        DAMPING,
-    )
-    # ranks = sample_pagerank(corpus, DAMPING, SAMPLES)
-    # print(f"PageRank Results from Sampling (n = {SAMPLES})")
-    # for page in sorted(ranks):
-    #     print(f"  {page}: {ranks[page]:.4f}")
-    # ranks = iterate_pagerank(corpus, DAMPING)
-    # print(f"PageRank Results from Iteration")
-    # for page in sorted(ranks):
-    #     print(f"  {page}: {ranks[page]:.4f}")
+    ranks = sample_pagerank(corpus, DAMPING, SAMPLES)
+    print(f"PageRank Results from Sampling (n = {SAMPLES})")
+    for page in sorted(ranks):
+        print(f"  {page}: {ranks[page]:.4f}")
+    ranks = iterate_pagerank(corpus, DAMPING)
+    print(f"PageRank Results from Iteration")
+    for page in sorted(ranks):
+        print(f"  {page}: {ranks[page]:.4f}")
 
 
 def crawl(directory):
@@ -81,7 +76,21 @@ def sample_pagerank(corpus, damping_factor, n):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
+    page_ranks = {}
+    page = random.choice(list(corpus.keys()))
+    for _ in range(n):
+        if page not in page_ranks:
+            page_ranks[page] = 0
+
+        page_ranks[page] += 1 / n
+
+        model = transition_model(corpus, page, damping_factor)
+        pages = list(model.keys())
+        probabilites = list(model.values())
+
+        page = random.choices(pages, weights=probabilites, k=1)[0]
+
+    return page_ranks
 
 
 def iterate_pagerank(corpus, damping_factor):
