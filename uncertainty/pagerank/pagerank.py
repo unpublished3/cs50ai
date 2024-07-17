@@ -1,6 +1,7 @@
 import os
 import random
 import re
+import copy
 import sys
 
 DAMPING = 0.85
@@ -102,7 +103,47 @@ def iterate_pagerank(corpus, damping_factor):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
+    old_ranks = {}
+    page_ranks = {}
+    c = (1 - damping_factor) / len(corpus)
+
+    for page in corpus:
+        old_ranks[page] = 1 / len(corpus)
+        page_ranks[page] = 1 / len(corpus)
+
+        if not len(corpus[page]):
+            for page_ in corpus:
+                corpus[page].add(page_)
+
+    back_links = {}
+    for page in corpus:
+        back_links[page] = set()
+        for page2 in corpus:
+            if page in corpus[page2]:
+                back_links[page].add(page2)
+
+    while True:
+        for page in corpus:
+            rank = 0
+
+            for page2 in back_links[page]:
+                rank += old_ranks[page2] / len(corpus[page2])
+            page_ranks[page] = round(damping_factor * rank + c, 5)
+
+        if not converged(old_ranks, page_ranks):
+            old_ranks = copy.deepcopy(page_ranks)
+        else:
+            break
+
+    return page_ranks
+
+
+def converged(old_ranks, new_ranks):
+    for page in old_ranks.keys():
+        if abs(old_ranks[page] - new_ranks[page]) >= 0.001:
+            return False
+
+    return True
 
 
 if __name__ == "__main__":
