@@ -182,15 +182,13 @@ def joint_probability(people, one_gene, two_genes, have_trait):
             for key in heredity_probility.keys():
 
                 if info[key] in two_genes:
-                    heredity_probility[key] *= (1 - PROBS["mutation"]) * (
-                        1 - PROBS["mutation"]
-                    )
+                    heredity_probility[key] *= 1 - PROBS["mutation"]
                 elif info[key] in one_gene:
-                    heredity_probility[key] *= (PROBS["mutation"]) * (
-                        1 - PROBS["mutation"]
+                    heredity_probility[key] *= PROBS["mutation"] * (0.5) + (
+                        (1 - PROBS["mutation"]) * 0.5
                     )
                 else:
-                    heredity_probility[key] *= PROBS["mutation"] * PROBS["mutation"]
+                    heredity_probility[key] *= PROBS["mutation"]
 
             probability *= heredity_probility["father"] + heredity_probility["mother"]
 
