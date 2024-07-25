@@ -33,69 +33,38 @@ def main():
 
     # Loop over all sets of people who might have the trait
     names = set(people)
-    joint_probability(
-        {
-            "Arthur": {"name": "Arthur", "mother": None, "father": None, "trait": None},
-            "Charlie": {
-                "name": "Charlie",
-                "mother": "Molly",
-                "father": "Arthur",
-                "trait": None,
-            },
-            "Fred": {
-                "name": "Fred",
-                "mother": "Molly",
-                "father": "Arthur",
-                "trait": None,
-            },
-            "Ginny": {
-                "name": "Ginny",
-                "mother": "Molly",
-                "father": "Arthur",
-                "trait": None,
-            },
-            "Molly": {"name": "Molly", "mother": None, "father": None, "trait": None},
-            "Ron": {
-                "name": "Ron",
-                "mother": "Molly",
-                "father": "Arthur",
-                "trait": None,
-            },
-        },
-        {"Arthur", "Ron"},
-        set(),
-        {"Arthur"},
-    )
-    # for have_trait in powerset(names):
+    for have_trait in powerset(names):
 
-    #     # Check if current set of people violates known information
-    #     fails_evidence = any(
-    #         (people[person]["trait"] is not None and
-    #          people[person]["trait"] != (person in have_trait))
-    #         for person in names
-    #     )
-    #     if fails_evidence:
-    #         continue
+        # Check if current set of people violates known information
+        fails_evidence = any(
+            (
+                people[person]["trait"] is not None
+                and people[person]["trait"] != (person in have_trait)
+            )
+            for person in names
+        )
+        if fails_evidence:
+            continue
 
-    #     # Loop over all sets of people who might have the gene
-    #     for one_gene in powerset(names):
-    #         for two_genes in powerset(names - one_gene):
+        # Loop over all sets of people who might have the gene
+        for one_gene in powerset(names):
+            for two_genes in powerset(names - one_gene):
 
-    #             # Update probabilities with new joint probability
-    #             p = joint_probability(people, one_gene, two_genes, have_trait)
-    #             update(probabilities, one_gene, two_genes, have_trait, p)
+                # Update probabilities with new joint probability
+                p = joint_probability(people, one_gene, two_genes, have_trait)
+                update(probabilities, one_gene, two_genes, have_trait, p)
 
-    # # Ensure probabilities sum to 1
-    # normalize(probabilities)
+    # Ensure probabilities sum to 1
+    normalize(probabilities)
 
     # Print results
-    # for person in people:
-    #     print(f"{person}:")
-    #     for field in probabilities[person]:
-    #         print(f"  {field.capitalize()}:")
-    #         for value in probabilities[person][field]:
-    #             p = probabilities[person][field][value]
-    #             print(f"    {value}: {p:.4f}")
+    for person in people:
+        print(f"{person}:")
+        for field in probabilities[person]:
+            print(f"  {field.capitalize()}:")
+            for value in probabilities[person][field]:
+                p = probabilities[person][field][value]
+                print(f"    {value}: {p:.4f}")
 
 
 def load_data(filename):
@@ -147,10 +116,6 @@ def joint_probability(people, one_gene, two_genes, have_trait):
         * everyone in set `have_trait` has the trait, and
         * everyone not in set` have_trait` does not have the trait.
     """
-    # print(people)
-    # print(one_gene)
-    # print(two_genes)
-    # print(have_trait)
     probability = 1
     gene_count = {}
 
@@ -221,7 +186,6 @@ def joint_probability(people, one_gene, two_genes, have_trait):
 
             probability *= heredity_probility["father"] * heredity_probility["mother"]
 
-    print(probability)
     return probability
 
 
@@ -232,7 +196,13 @@ def update(probabilities, one_gene, two_genes, have_trait, p):
     Which value for each distribution is updated depends on whether
     the person is in `have_gene` and `have_trait`, respectively.
     """
-    raise NotImplementedError
+
+    for person in probabilities:
+        probabilities[person]["gene"][
+            (person in one_gene) + (person in two_genes) * 2
+        ] += p
+
+        probabilities[person]["trait"][person in have_trait] += p
 
 
 def normalize(probabilities):
