@@ -210,7 +210,14 @@ def normalize(probabilities):
     Update `probabilities` such that each probability distribution
     is normalized (i.e., sums to 1, with relative proportions the same).
     """
-    raise NotImplementedError
+    for person in probabilities:
+        for value in probabilities[person]:
+            total = sum(
+                probability for probability in probabilities[person][value].values()
+            )
+
+            for probability in probabilities[person][value]:
+                probabilities[person][value][probability] /= total
 
 
 if __name__ == "__main__":
