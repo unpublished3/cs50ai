@@ -1,5 +1,6 @@
 import sys
 import copy
+import queue
 
 from crossword import *
 
@@ -122,10 +123,10 @@ class CrosswordCreator:
         """
         revised = False
 
-        if not self.crossword.overlaps[x,y]:
+        if not self.crossword.overlaps[x, y]:
             return False
         else:
-            (x_overlap, y_overlap) = self.crossword.overlaps[x,y]
+            (x_overlap, y_overlap) = self.crossword.overlaps[x, y]
 
         domain_copy = copy.deepcopy(self.domains[x])
 
@@ -138,8 +139,9 @@ class CrosswordCreator:
             if count == len(self.domains[y]):
                 self.domains[x].remove(value_x)
                 revised = True
-                
+
         return revised
+
     def ac3(self, arcs=None):
         """
         Update `self.domains` such that each variable is arc consistent.
@@ -149,13 +151,29 @@ class CrosswordCreator:
         Return True if arc consistency is enforced and no domains are empty;
         return False if one or more domains end up empty.
         """
-        for var1 in self.domains:
-            for var2 in self.domains:
-                if var1 != var2:
-                    self.revise(var1, var2)
-                    break
+        revision_queue = queue.Queue()
+        if arcs is None:
+            for var1 in self.domains:
+                for var2 in self.domains:
+                    if var1 != var2:
+                        revision_queue.put((var1, var2))
 
-            break
+        else:
+            for arc in arcs:
+                revision_queue.put(arc)
+
+        while not revision_queue.empty():
+            (x, y) = revision_queue.get()
+            revised = self.revise(x, y)
+            if revised:
+                if len(self.domains[x]) == 0:
+                    return False
+                
+                for var in self.domains:
+                    if var != x and var != y:
+                        revision_queue.put((var, x))
+
+        return True
 
     def assignment_complete(self, assignment):
         """
