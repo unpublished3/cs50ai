@@ -168,7 +168,7 @@ class CrosswordCreator:
             if revised:
                 if len(self.domains[x]) == 0:
                     return False
-                
+
                 for var in self.domains:
                     if var != x and var != y:
                         revision_queue.put((var, x))
@@ -180,14 +180,36 @@ class CrosswordCreator:
         Return True if `assignment` is complete (i.e., assigns a value to each
         crossword variable); return False otherwise.
         """
-        raise NotImplementedError
+        if len(self.domains) == len(assignment):
+            return True
+
+        return False
 
     def consistent(self, assignment):
         """
         Return True if `assignment` is consistent (i.e., words fit in crossword
         puzzle without conflicting characters); return False otherwise.
         """
-        raise NotImplementedError
+        for var, value in assignment.items():
+            if var.length != len(value):
+                return False
+
+        for var1, value1 in assignment.items():
+            for var2, value2 in assignment.items():
+                if var1 == var2:
+                    continue
+
+                if value1 == value2:
+                    return False
+
+                if not self.crossword.overlaps[var1, var2]:
+                    continue
+
+                (x, y) = self.crossword.overlaps[var1, var2]
+                if value1[x] != value2[y]:
+                    return False
+
+        return True
 
     def order_domain_values(self, var, assignment):
         """
