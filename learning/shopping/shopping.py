@@ -59,7 +59,51 @@ def load_data(filename):
     labels should be the corresponding list of labels, where each label
     is 1 if Revenue is true, and 0 otherwise.
     """
-    raise NotImplementedError
+    month = {
+        "Jan": 0,
+        "Feb": 1,
+        "Mar": 2,
+        "Apr": 3,
+        "May": 4,
+        "June": 5,
+        "Jul": 6,
+        "Aug": 7,
+        "Sep": 8,
+        "Oct": 9,
+        "Nov": 10,
+        "Dec": 11,
+    }
+    evidence = []
+    label = []
+    with open(filename, mode="r") as file:
+        reader = csv.reader(file)
+        _ = next(reader)
+        data = [row for row in reader]
+
+    for i, row in enumerate(data):
+        ev = []
+        # Administrative
+        ev.append(int(row[len(ev)]))
+        ev.append(float(row[len(ev)]))
+        ev.append(int(row[len(ev)]))
+        ev.append(float(row[len(ev)]))
+        ev.append(int(row[len(ev)]))
+        ev.append(float(row[len(ev)]))
+        ev.append(float(row[len(ev)]))
+        ev.append(float(row[len(ev)]))
+        ev.append(float(row[len(ev)]))
+        ev.append(float(row[len(ev)]))
+        ev.append(month[row[len(ev)]])
+        ev.append(int(row[len(ev)]))
+        ev.append(int(row[len(ev)]))
+        ev.append(int(row[len(ev)]))
+        ev.append(int(row[len(ev)]))
+        ev.append(1 if row[len(ev)] == "Returning_Visitor" else 0)
+        ev.append(1 if row[len(ev)] == "TRUE" else 0)
+        evidence.append(ev)
+        label.append(row[-1])
+
+    return (evidence, label)
 
 
 def train_model(evidence, labels):
@@ -67,7 +111,8 @@ def train_model(evidence, labels):
     Given a list of evidence lists and a list of labels, return a
     fitted k-nearest neighbor model (k=1) trained on the data.
     """
-    raise NotImplementedError
+    # raise NotImplementedError
+    pass
 
 
 def evaluate(labels, predictions):
@@ -85,7 +130,8 @@ def evaluate(labels, predictions):
     representing the "true negative rate": the proportion of
     actual negative labels that were accurately identified.
     """
-    raise NotImplementedError
+    # raise NotImplementedError
+    pass
 
 
 if __name__ == "__main__":
