@@ -220,11 +220,15 @@ class CrosswordCreator:
         """
         if len(self.domains[var]) <= 1:
             return list(self.domains[var])
-        
+
         constraint_count = {key: 0 for key in self.domains[var]}
 
         for var1 in self.domains:
-            if var1 in assignment or var == var1 or not self.crossword.overlaps[var, var1]:
+            if (
+                var1 in assignment
+                or var == var1
+                or not self.crossword.overlaps[var, var1]
+            ):
                 continue
 
             (x, y) = self.crossword.overlaps[var, var1]
@@ -234,10 +238,8 @@ class CrosswordCreator:
                     if value[x] != value1[y]:
                         constraint_count[value] += 1
 
-
         constraint_count = sorted(constraint_count, key=lambda x: constraint_count[x])
         return constraint_count
-
 
     def select_unassigned_variable(self, assignment):
         """
@@ -251,13 +253,15 @@ class CrosswordCreator:
         for var in self.domains:
             if var in assignment:
                 continue
-            
+
             if len(self.domains[var]) < choice[1]:
                 choice = (var, len(self.domains[var]))
             elif len(self.domains[var]) == choice:
-                if len(self.crossword.neighbors(var)) > len(self.crossword.neighbors(choice[0])):
+                if len(self.crossword.neighbors(var)) > len(
+                    self.crossword.neighbors(choice[0])
+                ):
                     choice[0] = var
-        
+
         return choice[0]
 
     def backtrack(self, assignment):
@@ -269,10 +273,23 @@ class CrosswordCreator:
 
         If no assignment is possible, return None.
         """
-        # raise NotImplementedError
-        for var in self.domains:
-            self.order_domain_values(var, set())
-            break
+        if len(assignment) == len(self.domains):
+            return assignment
+
+        var = self.select_unassigned_variable(assignment)
+        for value in self.order_domain_values(var, assignment):
+            new_assignment = assignment
+            new_assignment[var] = value
+
+            if self.consistent(new_assignment):
+                assignment = new_assignment
+                result = self.backtrack(assignment)
+                if result:
+                    return result
+                else:
+                    del assignment[var]
+
+        return None
 
 
 def main():
