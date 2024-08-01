@@ -1,3 +1,4 @@
+import copy
 import math
 import random
 import time
@@ -173,7 +174,23 @@ class NimAI:
         If multiple actions have the same Q-value, any of those
         options is an acceptable return value.
         """
-        raise NotImplementedError
+        epsilon_count = self.epsilon * 10 if epsilon else 0
+        n = random.randint(1, 10)
+
+        nim = Nim()
+        actions_list = nim.available_actions(state)
+
+        if n <= epsilon_count:
+            return random.choice(list(actions_list))
+
+        actions = {key: 0 for key in actions_list}
+
+        state = tuple(state)
+        for action in actions.keys():
+            if (state, action) in self.q:
+                actions[action] = self.q[(state, action)]
+
+        return max(actions, key=actions.get)
 
 
 def train(n):
