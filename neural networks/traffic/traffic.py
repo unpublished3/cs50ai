@@ -90,8 +90,8 @@ def get_model():
     model.add(tf.keras.layers.MaxPooling2D(pool_size=(2, 2)))
     model.add(tf.keras.layers.Flatten())
 
-    model.add(tf.keras.layers.Dense(128, activation="relu"))
-    model.add(tf.keras.layers.Dropout(0.5))
+    model.add(tf.keras.layers.Dense(1000, activation="relu"))
+    model.add(tf.keras.layers.Dropout(0.6))
 
     model.add(tf.keras.layers.Dense(128, activation="relu"))
 
