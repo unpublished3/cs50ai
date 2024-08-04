@@ -78,7 +78,7 @@ Testing on gtrsb-small dataset with three different signs. For a pait the first 
 
 8.  Altering the no. of nodes of the second dense layer didn't improve the model
 
-9.  Increasing the no. of nodes of the first dense layer from 128 to 1000 produced better results.
+9.  Increasing the no. of nodes of the first dense layer from 128 to 1000 produced better results (dropout 0.5). 
 
     Output:
 
@@ -93,3 +93,17 @@ Testing on gtrsb-small dataset with three different signs. For a pait the first 
          Run-3:
           accuracy: 0.8810 - loss: 0.4926
           accuracy: 0.9587 - loss: 0.2130
+
+10. Experimenting with other values of dropout
+
+        (0.6) Consistent between runs
+        accuracy: 0.9107 - loss: 0.4353
+        accuracy: 0.9347 - loss: 0.2235
+
+        (0.7) Consistent between runs
+        accuracy: 0.8452 - loss: 1.0122
+        accuracy: 0.9085 - loss: 0.3382
+
+11. Since accuracy increased from 0.5 to 0.6 but dropped from 0.6 to 0.7 values between 0.6 and 0.7 were tested.  
+
+12. 0.6 produced the most consisted and most accurate result. The accuracy for both testing and training set was over 90% so I consider the model fairly accurate and will stop here.

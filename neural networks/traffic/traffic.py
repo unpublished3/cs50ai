@@ -48,7 +48,7 @@ def load_data(data_dir):
     """
     Load image data from directory `data_dir`.
 
-    Assume `data_dir` has one directory named after each category, numbered
+    Assume `data_dir` has one dConsistent between runs  irectory named after each category, numbered
     0 through NUM_CATEGORIES - 1. Inside each category directory will be some
     number of image files.
 
