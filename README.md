@@ -7,5 +7,5 @@ Repo for projects done for cousrse [CS50 AI](https://cs50.harvard.edu/ai/2024/)
 - [x] Uncertainty
 - [x] Optimization
 - [x] Learning
-- [ ] Neural Netwroks
+- [x] Neural Netwroks
 - [ ] Language

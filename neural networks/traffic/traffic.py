@@ -95,7 +95,6 @@ def get_model():
 
     model.add(tf.keras.layers.Dense(128, activation="relu"))
 
-
     model.add(tf.keras.layers.Dense(NUM_CATEGORIES, activation="softmax"))
     model.summary()
 
