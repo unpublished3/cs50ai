@@ -5,6 +5,7 @@
 Sentence used: Let's go to the [MASK] park.
 
 ![Text](./images/s1.png)
+
 Here, the [MASK] strongly corresponds to the noun park. In this case [MASK] is most likely a noun. Here, a noun pays attention to another noun.
 
 Example Sentences:
@@ -16,6 +17,7 @@ Example Sentences:
 Sentence used: The food smells [MASK].
 
 ![Text](./images/s2.png)
+
 Here, the [MASK]  corresponds to the verb smells. Here, a verb pays attention to an adjective.
 
 Example Sentences:
