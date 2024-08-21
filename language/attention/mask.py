@@ -45,8 +45,10 @@ def get_mask_token_index(mask_token_id, inputs):
     Return the index of the token with the specified `mask_token_id`, or
     `None` if not present in the `inputs`.
     """
-    # TODO: Implement this function
-    raise NotImplementedError
+    index = tf.where(inputs["input_ids"] == mask_token_id).numpy().flatten() 
+    if (len(index)):
+        return index[1]
+    return None
 
 
 
